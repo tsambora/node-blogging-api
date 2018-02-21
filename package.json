@@ -1,0 +1,17 @@
+{
+  "name": "node-blogging-api",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Tino Sambora",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "knex": "^0.14.4",
+    "mysql": "^2.15.0"
+  }
+}

@@ -1,6 +1,6 @@
 const { saltHashPassword } = require('../store');
 
-exports.up = async function up(knex) {
+exports.up = async (knex) => {
   function convertPassword(user) {
     const { salt, hash } = saltHashPassword(user.password);
 
@@ -23,10 +23,8 @@ exports.up = async function up(knex) {
   });
 };
 
-exports.down = function down(knex) {
-  return knex.schema.table('user', (t) => {
-    t.dropColumn('salt');
-    t.dropColumn('encrypted_password');
-    t.string('password').notNullable();
-  });
-};
+exports.down = knex => knex.schema.table('user', (t) => {
+  t.dropColumn('salt');
+  t.dropColumn('encrypted_password');
+  t.string('password').notNullable();
+});

@@ -23,33 +23,31 @@ module.exports = {
   async createUser({ username, password }) {
     console.log(`Add user ${username}`);
     const { salt, hash } = saltHashPassword({ password });
-    const existingUser = await knex('user').where({ username });
-
-    if (!existingUser.length) {
-      const newUser = await knex('user').insert({
+    const rows = await knex('user').where({ username });
+    if (!rows.length) {
+      // TODO: find a way to name this "user" var correctly
+      const user = await knex('user').insert({
         salt,
         encrypted_password: hash,
         username,
       });
-
-      if (newUser.length) {
+      if (user.length) {
         return { success: true };
       }
     }
     return { success: false };
   },
-  authenticate({ username, password }) {
+  async authenticate({ username, password }) {
     console.log(`Authenticating user ${username}`);
-    return knex('user').where({ username })
-      .then(([user]) => {
-        if (!user) {
-          return { success: false };
-        }
-        const { hash } = saltHashPassword({
-          password,
-          salt: user.salt,
-        });
-        return { success: hash === user.encrypted_password };
-      });
+    const rows = await knex('user').where({ username });
+    if (!rows.length) {
+      return { success: false };
+    }
+    const user = rows[0];
+    const { hash } = saltHashPassword({
+      password,
+      salt: user.salt,
+    });
+    return { success: hash === user.encrypted_password };
   },
 };

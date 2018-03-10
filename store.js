@@ -20,14 +20,23 @@ function saltHashPassword({
 
 module.exports = {
   saltHashPassword,
-  createUser({ username, password }) {
+  async createUser({ username, password }) {
     console.log(`Add user ${username}`);
-    const { salt, hash } = saltHashPassword(password);
-    return knex('user').insert({
-      salt,
-      encrypted_password: hash,
-      username,
-    });
+    const { salt, hash } = saltHashPassword({ password });
+    const existingUser = await knex('user').where({ username });
+
+    if (!existingUser.length) {
+      const newUser = await knex('user').insert({
+        salt,
+        encrypted_password: hash,
+        username,
+      });
+
+      if (newUser.length) {
+        return { success: true };
+      }
+    }
+    return { success: false };
   },
   authenticate({ username, password }) {
     console.log(`Authenticating user ${username}`);

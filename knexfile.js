@@ -3,6 +3,6 @@ module.exports = {
   connection: {
     user: 'root',
     password: 'password',
-    database: 'blogging_api'
-  }
-}
+    database: 'blogging_api',
+  },
+};

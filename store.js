@@ -1,5 +1,8 @@
 const crypto = require('crypto');
 const knex = require('knex')(require('./knexfile'));
+const jwt = require('jsonwebtoken');
+
+const config = require('./config');
 
 function randomString() {
   return crypto.randomBytes(4).toString('hex');
@@ -22,23 +25,26 @@ module.exports = {
   saltHashPassword,
   async createUser({ username, password }) {
     console.log(`Add user ${username}`);
-    const { salt, hash } = saltHashPassword({ password });
-    const rows = await knex('user').where({ username });
-    if (!rows.length) {
-      // TODO: find a way to name this "user" var correctly
-      const user = await knex('user').insert({
+    const existingUsers = await knex('user').where({ username });
+    if (!existingUsers.length) {
+      const { salt, hash } = saltHashPassword({ password });
+      const rows = await knex('user').insert({
         salt,
         encrypted_password: hash,
         username,
       });
-      if (user.length) {
-        return { success: true };
+      if (rows.length) {
+        const userId = rows[0];
+        const token = jwt.sign({ id: userId }, config.secret, {
+          expiresIn: 30,
+        });
+        return { success: true, data: { token } };
       }
     }
-    return { success: false };
+    return { success: false, data: null };
   },
-  async authenticate({ username, password }) {
-    console.log(`Authenticating user ${username}`);
+  async loginUser({ username, password }) {
+    console.log(`Log in user ${username}`);
     const rows = await knex('user').where({ username });
     if (!rows.length) {
       return { success: false };
@@ -48,6 +54,21 @@ module.exports = {
       password,
       salt: user.salt,
     });
-    return { success: hash === user.encrypted_password };
+    if (hash === user.encrypted_password) {
+      const token = jwt.sign({ id: user.id }, config.secret, {
+        expiresIn: 30,
+      });
+      return { success: true, data: { token } };
+    }
+    return { success: false, data: null };
+  },
+  async getUser({ userId }) {
+    console.log(`Get user ${userId}`);
+    const rows = await knex('user').where({ id: userId });
+    if (!rows.length) {
+      return { success: false, data: null };
+    }
+    const { id, username } = rows[0];
+    return { success: true, data: { id, username } };
   },
 };

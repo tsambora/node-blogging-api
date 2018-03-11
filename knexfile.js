@@ -1,8 +1,8 @@
 module.exports = {
   client: 'mysql',
   connection: {
-    user: 'root',
-    password: 'password',
-    database: 'blogging_api',
+    user: process.env.DB_USER,
+    password: process.env.DB_PASSWORD,
+    database: process.env.DB_NAME,
   },
 };

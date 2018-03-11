@@ -21,6 +21,7 @@ function saltHashPassword({
   };
 }
 
+/* eslint-disable no-console */
 module.exports = {
   saltHashPassword,
   async createUser({ username, password }) {
@@ -72,3 +73,4 @@ module.exports = {
     return { success: true, data: { id, username } };
   },
 };
+/* eslint-disable no-console */

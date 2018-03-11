@@ -48,8 +48,6 @@ app.get('/me', utils.verifyToken, (req, res) => {
     });
 });
 
-/* eslint-disable no-console */
 app.listen(7555, () => {
-  console.log('Server running on http://localhost:7555');
+  console.log('Server running on http://localhost:7555'); // eslint-disable-line no-console
 });
-/* eslint-disable no-console */

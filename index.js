@@ -51,3 +51,5 @@ app.get('/me', utils.verifyToken, (req, res) => {
 app.listen(7555, () => {
   console.log('Server running on http://localhost:7555'); // eslint-disable-line no-console
 });
+
+module.exports = app;

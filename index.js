@@ -6,6 +6,9 @@ const store = require('./store');
 
 const app = express();
 app.use(bodyParser.json());
+app.get('/api', (req, res) => {
+  res.status(200).send({ message: 'API is running' });
+});
 app.post('/api/register', (req, res) => {
   store
     .createUser({

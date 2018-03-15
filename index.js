@@ -6,7 +6,7 @@ const store = require('./store');
 
 const app = express();
 app.use(bodyParser.json());
-app.post('/register', (req, res) => {
+app.post('/api/register', (req, res) => {
   store
     .createUser({
       username: req.body.username,
@@ -20,7 +20,7 @@ app.post('/register', (req, res) => {
       }
     });
 });
-app.post('/login', (req, res) => {
+app.post('/api/login', (req, res) => {
   store
     .loginUser({
       username: req.body.username,
@@ -34,7 +34,7 @@ app.post('/login', (req, res) => {
       }
     });
 });
-app.get('/me', utils.verifyToken, (req, res) => {
+app.get('/api/me', utils.verifyToken, (req, res) => {
   store
     .getUser({
       userId: req.userId,
